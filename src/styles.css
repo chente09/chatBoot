@@ -31,7 +31,7 @@ body {
   }
   
   body[data-theme='dark'] .user-message {
-    background-color: #007bff;
+    background-color: #444444;
     color: #ffffff;
   }
   
@@ -60,3 +60,4 @@ body {
   body[data-theme='dark'] .theme-toggle {
     color: #f1c40f;
   }
+

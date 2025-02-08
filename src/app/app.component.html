@@ -14,7 +14,7 @@
   </div>
 
   <div class="input-area">
-    <input [(ngModel)]="userInput" placeholder="Type your message..." (keyup.enter)="sendMessage()" />
+    <input [(ngModel)]="userInput" placeholder="Ingresa el mensaje..." (keyup.enter)="sendMessage()" class="input"/>
     <button (click)="sendMessage()">
       <i class="fas fa-paper-plane"></i>
     </button>
@@ -36,14 +36,18 @@
 
   <!-- Controles para activar los modelos de visión -->
   <div class="vision-controls">
-    <label>
-      <input type="checkbox" [(ngModel)]="enableImageClassification" />
-      Activar Clasificación de Imágenes
-    </label>
-    <label>
-      <input type="checkbox" [(ngModel)]="enableObjectDetection" />
-      Activar Detección de Objetos
-    </label>
+    <div class="checkbox-container"> 
+      <label>
+        <input type="checkbox" [(ngModel)]="enableImageClassification" />
+        Clasificación de Imágenes
+      </label>
+    </div>
+    <div class="checkbox-container">
+      <label>
+        <input type="checkbox" [(ngModel)]="enableObjectDetection" />
+        Detección de Objetos
+      </label>
+    </div>
   </div>
 
   
