@@ -1,0 +1,50 @@
+<div [ngClass]="{'night-mode': isNightMode, 'day-mode': !isNightMode}" class="chatbot-container">
+  <div class="header">
+    <h2>AI Chatbot</h2>
+    <button class="theme-toggle" aria-label="Toggle theme" (click)="toggleNightMode()">
+      <i class="fas" [ngClass]="isNightMode ? 'fa-sun' : 'fa-moon'"></i>
+    </button>
+  </div>
+
+  <div class="chat-window">
+    <div *ngFor="let message of messages" [ngClass]="{ 'user-message': message.isUser, 'bot-message': !message.isUser }" class="message">
+      {{ message.text }}
+      <div class="message-timestamp">{{ message.timestamp | date:'short' }}</div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <input [(ngModel)]="userInput" placeholder="Type your message..." (keyup.enter)="sendMessage()" />
+    <button (click)="sendMessage()">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  
+    <!-- Botón para grabar audio -->
+    <button (click)="toggleRecording()" [ngClass]="{'recording': isRecording}">
+      <i class="fas fa-microphone "></i> {{ isRecording ? 'Detener' : ' Grabar' }}
+    </button>
+  
+    <!-- Mostrar el campo de carga de imagen solo si está activada la opción -->
+    <div *ngIf="enableImageClassification || enableObjectDetection" class="image-upload">
+      <label for="file-upload" class="upload-button">
+        <input id="file-upload" type="file" accept="image/*,audio/*" (change)="onFileUpload($event)" style="display: none;" />
+        <i class="fas fa-upload"></i> Subir archivo
+      </label>
+    </div>
+  </div>
+  
+
+  <!-- Controles para activar los modelos de visión -->
+  <div class="vision-controls">
+    <label>
+      <input type="checkbox" [(ngModel)]="enableImageClassification" />
+      Activar Clasificación de Imágenes
+    </label>
+    <label>
+      <input type="checkbox" [(ngModel)]="enableObjectDetection" />
+      Activar Detección de Objetos
+    </label>
+  </div>
+
+  
+</div>
