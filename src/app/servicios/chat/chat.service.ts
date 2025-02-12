@@ -1,32 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { catchError, lastValueFrom, Observable, throwError } from 'rxjs';
+import { catchError, from, lastValueFrom, Observable, throwError } from 'rxjs';
+import { OpenAiService } from '../openAi/open-ai.service';
+import { environment } from '../../../environments/environments';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  private apiUrl = 'https://api.openai.com/v1/chat/completions'; // ✅ URL correcta
+  
   private audioApiUrl = 'https://api.openai.com/v1/audio/transcriptions';
 
-  private apiKey = ''; // ⚠️ No expongas tu API Key en el código
+  private apiKey = environment.apiKey;
   
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private openAiService: OpenAiService) { }
 
   // Enviar mensaje de texto y recibir respuesta
-  sendMessage(message: string): Observable<any> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${this.apiKey}`,
-    });
-
-    const body = {
-      model: 'gpt-4',  // Asegúrate de que el modelo es válido
-      messages: [{ role: 'user', content: message }],
-      max_tokens: 150
-    };
-
-    return this.http.post(this.apiUrl, body, { headers });
+  sendMessage(message: string): Observable<string> {
+    return from(this.openAiService.sendMessage(message));
   }
 
 // Enviar audio al backend para transcripción (Whisper)transcribeAudio(file: File): Promise<string> {
@@ -34,12 +25,12 @@ export class ChatService {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('model', 'whisper-1');
-    formData.append('language', 'es'); // ✅ Forzar idioma español (opcional)
+    formData.append('language', 'es'); // Forzar idioma español (opcional)
   
     try {
-      const response = await lastValueFrom(  // 👈 Reemplaza toPromise() por lastValueFrom()
+      const response = await lastValueFrom(
         this.http.post<{ text: string }>(this.audioApiUrl, formData, {
-          headers: { 'Authorization': `Bearer ${this.apiKey}` }, // ❌ NO agregues 'Content-Type'
+          headers: { 'Authorization': `Bearer ${this.apiKey}` } // No se agrega Content-Type
         })
       );
   

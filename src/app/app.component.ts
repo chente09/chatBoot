@@ -50,17 +50,17 @@ export class AppComponent {
 
   sendMessage() {
     if (!this.userInput.trim()) return;
-
-    // Agregar mensaje del usuario
+  
+    // Agregar mensaje del usuario a la lista
     this.messages.push({ text: this.userInput, isUser: true, timestamp: new Date() });
-
+  
     const inputText = this.userInput;
     this.userInput = '';
-
-    // Llamada al servicio para enviar el mensaje y recibir respuesta en streaming
+  
+    // Llamada al servicio para enviar el mensaje
     this.chatService.sendMessage(inputText).subscribe({
-      next: (response) => {
-        const botReply = response.choices[0].message.content;
+      next: (botReply: string) => {
+        // botReply ya es un string con la respuesta del asistente
         this.messages.push({ text: botReply, isUser: false, timestamp: new Date() });
       },
       error: (err) => console.error(err),
@@ -120,11 +120,12 @@ export class AppComponent {
       this.messages.push({ text: transcription, isUser: true, timestamp: new Date() });
   
       this.chatService.sendMessage(transcription).subscribe({
-        next: (response) => {
-          this.messages.push({ text: response.choices[0].message.content, isUser: false, timestamp: new Date() });
+        next: (response: string) => {
+          this.messages.push({ text: response, isUser: false, timestamp: new Date() });
         },
         error: (err) => console.error('Error en respuesta del chatbot:', err),
       });
+      
   
     } catch (error) {
       console.error('Error transcribiendo el audio:', error);
