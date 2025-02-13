@@ -48,23 +48,49 @@ export class AppComponent {
     }
   }
 
-  sendMessage() {
+  async sendMessage() {
     if (!this.userInput.trim()) return;
-  
-    // Agregar mensaje del usuario a la lista
+
+    // Añadir el mensaje del usuario
     this.messages.push({ text: this.userInput, isUser: true, timestamp: new Date() });
-  
     const inputText = this.userInput;
     this.userInput = '';
-  
-    // Llamada al servicio para enviar el mensaje
-    this.chatService.sendMessage(inputText).subscribe({
-      next: (botReply: string) => {
-        // botReply ya es un string con la respuesta del asistente
-        this.messages.push({ text: botReply, isUser: false, timestamp: new Date() });
-      },
-      error: (err) => console.error(err),
-    });
+
+    // Añadir un mensaje de "Generando respuesta..."
+    this.messages.push({ text: 'Generando respuesta...', isUser: false, timestamp: new Date() });
+
+    try {
+      // Obtener el observable de streaming
+      const botReply$ = this.chatService.sendMessage(inputText);
+
+      // Reemplazar el mensaje "Generando respuesta..." con la respuesta real
+      const lastMessageIndex = this.messages.length - 1;
+
+      // Suscribirse al observable para recibir los chunks
+      let isFirstChunk = true; // Bandera para identificar el primer chunk
+      botReply$.subscribe({
+        next: (chunk) => {
+          if (isFirstChunk) {
+            // Reemplazar el mensaje "Generando respuesta..." con el primer chunk
+            this.messages[lastMessageIndex].text = chunk;
+            isFirstChunk = false;
+          } else {
+            // Añadir los siguientes chunks al mensaje
+            this.messages[lastMessageIndex].text += chunk;
+          }
+        },
+        error: (error) => {
+          console.error('Error al recibir la respuesta del asistente:', error);
+          this.messages[lastMessageIndex].text = 'Error al procesar la solicitud.';
+        },
+        complete: () => {
+          console.log('Streaming completado');
+        }
+      });
+    } catch (error) {
+      console.error('Error al enviar mensaje:', error);
+      this.messages[this.messages.length - 1].text = 'Error al procesar la solicitud.';
+    }
   }
 
   // Método para iniciar/detener la grabación

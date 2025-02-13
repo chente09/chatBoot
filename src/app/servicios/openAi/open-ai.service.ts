@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import OpenAI from 'openai';
 import { environment } from '../../../environments/environments';
+import { Observable } from 'rxjs';
 
 
 @Injectable({
@@ -30,43 +31,34 @@ export class OpenAiService {
     }
   }
 
-  async sendMessage(message: string): Promise<string> {
-    try {
-      if (!this.threadId) {
-        await this.createThread();
-      }
-      if (!this.threadId) throw new Error("No se pudo crear el Thread.");
-  
-      // ✅ Enviar el mensaje al hilo
-      await this.openai.beta.threads.messages.create(this.threadId, {
-        role: "user",
-        content: message,
-      });
-  
-      // ✅ Ejecutar el asistente en el thread
-      const run = await this.openai.beta.threads.runs.create(this.threadId, {
-        assistant_id: this.assistantId,
-      });
-  
-      // ✅ Esperar a que el asistente genere la respuesta
-      let runStatus;
-      do {
-        runStatus = await this.openai.beta.threads.runs.retrieve(this.threadId, run.id);
-        await new Promise((resolve) => setTimeout(resolve, 2000)); // Esperar 2s antes de verificar el estado
-      } while (runStatus.status === "in_progress" || runStatus.status === "queued");
-  
-      // ✅ Obtener la respuesta del asistente
-      const messages = await this.openai.beta.threads.messages.list(this.threadId);
-      const lastMessage = messages.data.find(msg => msg.role === "assistant");
-  
-      // 🛠 Filtrar el contenido del mensaje para obtener solo los bloques de texto
-      const textBlock = lastMessage?.content.find(block => "text" in block) as { text: { value: string } } | undefined;
-  
-      return textBlock?.text.value || "No se encontró una respuesta válida.";
-    } catch (error) {
-      console.error("Error en OpenAI:", error);
-      return "Hubo un error al procesar la solicitud.";
-    }
+  sendMessage(message: string): Observable<string> {
+    return new Observable(observer => {
+      (async () => {
+        try {
+          // Crear un hilo y ejecutar el asistente con streaming
+          const stream = await this.openai.beta.threads.createAndRun({
+            assistant_id: 'asst_uYT0oGvRKoFeHymfZ4MBgKl0',
+            thread: {
+              messages: [{ role: 'user', content: message }]
+            },
+            stream: true, // Habilitar streaming
+          });
+
+          // Procesar los eventos del stream
+          for await (const event of stream) {
+            if (event.event === 'thread.message.delta') {
+              const content = event.data.delta.content?.[0];
+              if (content?.type === 'text' && content.text?.value) {
+                observer.next(content.text.value); // Emitir cada chunk de texto
+              }
+            }
+          }
+          observer.complete(); // Finalizar el stream
+        } catch (error) {
+          observer.error('Error al enviar mensaje al asistente: ' + error);
+        }
+      })();
+    });
   }
   
 }
