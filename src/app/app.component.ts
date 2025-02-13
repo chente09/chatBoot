@@ -137,26 +137,55 @@ export class AppComponent {
 
   // Enviar el audio grabado a la API de OpenAI para transcribirlo
   async sendAudioToAPI() {
-    const file = new File([new Blob(this.audioChunks, { type: 'audio/webm' })], 'grabacion.webm', { type: 'audio/webm' });
+    const file = new File(
+      [new Blob(this.audioChunks, { type: 'audio/webm' })],
+      'grabacion.webm',
+      { type: 'audio/webm' }
+    );
   
     try {
       const transcription = await this.chatService.transcribeAudio(file);
       if (!transcription?.trim()) return;
   
-      this.messages.push({ text: transcription, isUser: true, timestamp: new Date() });
-  
-      this.chatService.sendMessage(transcription).subscribe({
-        next: (response: string) => {
-          this.messages.push({ text: response, isUser: false, timestamp: new Date() });
-        },
-        error: (err) => console.error('Error en respuesta del chatbot:', err),
+      // Añadir el mensaje del usuario (transcripción)
+      this.messages.push({
+        text: transcription,
+        isUser: true,
+        timestamp: new Date()
       });
-      
   
+      // Añadir un mensaje de "Generando respuesta..." para la respuesta del bot
+      this.messages.push({
+        text: 'Generando respuesta...',
+        isUser: false,
+        timestamp: new Date()
+      });
+      const lastMessageIndex = this.messages.length - 1;
+  
+      // Suscribirse al observable de streaming de respuesta
+      this.chatService.sendMessage(transcription).subscribe({
+        next: (chunk: string) => {
+          // Si es el primer chunk, reemplaza el mensaje
+          if (this.messages[lastMessageIndex].text === 'Generando respuesta...') {
+            this.messages[lastMessageIndex].text = chunk;
+          } else {
+            // Sino, concatena el siguiente chunk
+            this.messages[lastMessageIndex].text += chunk;
+          }
+        },
+        error: (err) => {
+          console.error('Error en respuesta del chatbot:', err);
+          this.messages[lastMessageIndex].text = 'Error al procesar la solicitud.';
+        },
+        complete: () => {
+          console.log('Streaming completado');
+        }
+      });
     } catch (error) {
       console.error('Error transcribiendo el audio:', error);
     }
   }
+  
   
 
   onFileUpload(event: any) {
