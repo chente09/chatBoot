@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { ChatService } from './servicios/chat/chat.service';
+import { ApiService } from './servicios/api/api.service';
 
 
 interface Message {
@@ -23,6 +24,31 @@ export class AppComponent {
   messages: { text: string, isUser: boolean, timestamp?: Date }[] = [];
   userInput: string = '';
   currentAssistantMessage: Message | null = null;
+  selectedFile: File | null = null;
+  classificationResult: string = '';
+
+
+  readonly CLASSES = ['apple_pie', 'baby_back_ribs', 'baklava', 'beef_carpaccio', 'beef_tartare',
+    'beet_salad', 'beignets', 'bibimbap', 'bread_pudding', 'breakfast_burrito',
+    'bruschetta', 'caesar_salad', 'cannoli', 'caprese_salad', 'carrot_cake',
+    'ceviche', 'cheesecake', 'cheese_plate', 'chicken_curry', 'chicken_quesadilla',
+    'chicken_wings', 'chocolate_cake', 'chocolate_mousse', 'churros', 'clam_chowder',
+    'club_sandwich', 'crab_cakes', 'creme_brulee', 'croque_madame', 'cup_cakes',
+    'deviled_eggs', 'donuts', 'dumplings', 'edamame', 'eggs_benedict', 'escargots',
+    'falafel', 'filet_mignon', 'fish_and_chips', 'foie_gras', 'french_fries',
+    'french_onion_soup', 'french_toast', 'fried_calamari', 'fried_rice',
+    'frozen_yogurt', 'garlic_bread', 'gnocchi', 'greek_salad', 'grilled_cheese_sandwich',
+    'grilled_salmon', 'guacamole', 'gyoza', 'hamburger', 'hot_and_sour_soup',
+    'hot_dog', 'huevos_rancheros', 'hummus', 'ice_cream', 'lasagna', 'lobster_bisque',
+    'lobster_roll_sandwich', 'macaroni_and_cheese', 'macarons', 'miso_soup', 'mussels',
+    'nachos', 'omelette', 'onion_rings', 'oysters', 'pad_thai', 'paella', 'pancakes',
+    'panna_cotta', 'peking_duck', 'pho', 'pizza', 'pork_chop', 'poutine', 'prime_rib',
+    'pulled_pork_sandwich', 'ramen', 'ravioli', 'red_velvet_cake', 'risotto', 'samosa',
+    'sashimi', 'scallops', 'seaweed_salad', 'shrimp_and_grits', 'spaghetti_bolognese',
+    'spaghetti_carbonara', 'spring_rolls', 'steak', 'strawberry_shortcake', 'sushi',
+    'tacos', 'takoyaki', 'tiramisu', 'tuna_tartare', 'waffles'];
+
+
 
   // Controles para modelos de visión
   enableImageClassification = false;
@@ -32,7 +58,7 @@ export class AppComponent {
   mediaRecorder: MediaRecorder | null = null;
   audioChunks: Blob[] = [];
 
-  constructor(private chatService: ChatService) {}
+  constructor(private chatService: ChatService, private apiService: ApiService) {}
 
   toggleNightMode() {
     this.isNightMode = !this.isNightMode;
@@ -186,15 +212,78 @@ export class AppComponent {
     }
   }
   
-  
+  // Método para clasificar la imagen y responder con el asistente
+  async askAssistant() {
+    if (!this.userInput.trim() && !this.selectedFile) return;
 
-  onFileUpload(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      alert(`File uploaded: ${file.name}`);
-      // Handle file upload logic here
+    if (this.selectedFile) {
+      this.messages.push({ text: "🔍 Clasificando imagen...", isUser: false, timestamp: new Date() });
+
+      // Realiza la clasificación de la imagen utilizando el servicio de la API
+      this.apiService.classifyImage(this.selectedFile).subscribe({
+        next: (response) => {
+          const predictedIndex = parseInt(response.predictions); // Recibe un número
+          const predictedLabel = this.CLASSES[predictedIndex] || "Desconocido"; // Convierte a nombre
+
+          // Añadir al chat la clasificación de la imagen
+          this.messages.push({ text: `📸 Imagen clasificada como: ${predictedLabel}`, isUser: false, timestamp: new Date() });
+
+          // Limpiar la selección de la imagen
+          this.selectedFile = null;
+        },
+        error: () => {
+          // Si hay un error en la clasificación, añadir mensaje de error
+          this.messages.push({ text: "❌ Error al clasificar la imagen.", isUser: false, timestamp: new Date() });
+          this.selectedFile = null;
+        }
+      });
+      return;
+    }
+
+    // Si hay texto de usuario, proceder con el flujo normal de mensaje.
+    this.messages.push({ text: this.userInput, isUser: true, timestamp: new Date() });
+    this.userInput = '';
+
+    // Aquí puedes añadir cualquier otra lógica para responder con el asistente
+    const inputText = this.userInput;
+    this.messages.push({ text: 'Generando respuesta...', isUser: false, timestamp: new Date() });
+
+    try {
+      // Obtener el observable de streaming
+      const botReply$ = this.chatService.sendMessage(inputText);
+
+      // Reemplazar el mensaje "Generando respuesta..." con la respuesta real
+      const lastMessageIndex = this.messages.length - 1;
+
+      // Suscribirse al observable para recibir los chunks
+      let isFirstChunk = true;
+      botReply$.subscribe({
+        next: (chunk) => {
+          if (isFirstChunk) {
+            this.messages[lastMessageIndex].text = chunk;
+            isFirstChunk = false;
+          } else {
+            this.messages[lastMessageIndex].text += chunk;
+          }
+        },
+        error: (error) => {
+          console.error('Error al recibir la respuesta del asistente:', error);
+          this.messages[lastMessageIndex].text = 'Error al procesar la solicitud.';
+        },
+        complete: () => {
+          console.log('Streaming completado');
+        }
+      });
+    } catch (error) {
+      console.error('Error al enviar mensaje:', error);
+      this.messages[this.messages.length - 1].text = 'Error al procesar la solicitud.';
     }
   }
-  
-  
+
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0] || null;
+    if (this.selectedFile) {
+      this.messages.push({ text: `📂 Imagen seleccionada: ${this.selectedFile.name}`, isUser: true, timestamp: new Date() });
+    }
+  }
 }

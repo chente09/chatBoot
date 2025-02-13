@@ -27,7 +27,7 @@
     <!-- Mostrar el campo de carga de imagen solo si está activada la opción -->
     <div *ngIf="enableImageClassification || enableObjectDetection" class="image-upload">
       <label for="file-upload" class="upload-button">
-        <input id="file-upload" type="file" accept="image/*,audio/*" (change)="onFileUpload($event)" style="display: none;" />
+        <input id="file-upload" type="file" accept="image/*" (change)="onFileSelected($event)" style="display: none;" />
         <i class="fas fa-upload"></i> Subir archivo
       </label>
     </div>
