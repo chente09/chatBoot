@@ -156,3 +156,11 @@ button i {
   margin-top: 10px;
   font-size: small;
 }
+
+.message-image {
+  max-width: 200px;
+  max-height: 200px;
+  display: block;
+  margin-top: 10px;
+  border-radius: 8px;
+}

@@ -21,10 +21,11 @@ interface Message {
 })
 export class AppComponent {
   isNightMode: boolean = false;
-  messages: { text: string, isUser: boolean, timestamp?: Date }[] = [];
+  messages: { text: string, isUser: boolean, timestamp?: Date ,imageUrl?: string}[] = [];
   userInput: string = '';
   currentAssistantMessage: Message | null = null;
   selectedFile: File | null = null;
+  imagePreview: string | null = null;
   classificationResult: string = '';
 
 
@@ -238,7 +239,23 @@ export class AppComponent {
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0] || null;
     if (this.selectedFile) {
-      this.messages.push({ text: `📂 Imagen seleccionada: ${this.selectedFile.name}`, isUser:true, timestamp: new Date() });
+      // Generar vista previa
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const imageUrl = e.target.result;
+        // Agrega el mensaje con la vista previa de la imagen
+        this.messages.push({
+          text: `📂 Imagen seleccionada: ${this.selectedFile!.name}`,
+          isUser: true,
+          timestamp: new Date(),
+          imageUrl: imageUrl
+        });
+      };
+      reader.readAsDataURL(this.selectedFile);
+
+      
+    } else {
+      this.imagePreview = null;
     }
   }
 
