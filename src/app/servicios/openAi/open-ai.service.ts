@@ -35,17 +35,25 @@ export class OpenAiService {
     return new Observable(observer => {
       (async () => {
         try {
-          // Crear un hilo y ejecutar el asistente con streaming
-          const stream = await this.openai.beta.threads.createAndRun({
-            assistant_id: 'asst_uYT0oGvRKoFeHymfZ4MBgKl0',
-            thread: {
-              messages: [{ role: 'user', content: message }]
-            },
-            stream: true, // Habilitar streaming
+          if (!this.threadId) {
+            await this.createThread();
+          }
+          if (!this.threadId) throw new Error("No se pudo crear el Thread.");
+
+          // Agregar mensaje al thread
+          await this.openai.beta.threads.messages.create(this.threadId, {
+            role: "user",
+            content: message
+          });
+
+          // Ejecutar el asistente en el thread con streaming
+          const run = await this.openai.beta.threads.runs.create(this.threadId, {
+            assistant_id: this.assistantId,
+            stream: true, // ✅ Habilitar streaming
           });
 
           // Procesar los eventos del stream
-          for await (const event of stream) {
+          for await (const event of run) {
             if (event.event === 'thread.message.delta') {
               const content = event.data.delta.content?.[0];
               if (content?.type === 'text' && content.text?.value) {
@@ -53,12 +61,36 @@ export class OpenAiService {
               }
             }
           }
-          observer.complete(); // Finalizar el stream
+
+          observer.complete();
         } catch (error) {
           observer.error('Error al enviar mensaje al asistente: ' + error);
         }
       })();
     });
   }
-  
+
+  // Enviar audio al backend para transcripción (Whisper)
+  async transcribeAudio(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('model', 'whisper-1');
+    formData.append('language', 'es'); // ✅ Forzar idioma español (opcional)
+
+    try {
+      const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.openai.apiKey}`,
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+      return data?.text || 'No se recibió ninguna transcripción.';
+    } catch (error) {
+      console.error('Error en OpenAI Audio API:', error);
+      throw error;
+    }
+  }
 }

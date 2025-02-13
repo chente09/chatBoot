@@ -215,75 +215,48 @@ export class AppComponent {
   // Método para clasificar la imagen y responder con el asistente
   async askAssistant() {
     if (!this.userInput.trim() && !this.selectedFile) return;
-
+  
     if (this.selectedFile) {
       this.messages.push({ text: "🔍 Clasificando imagen...", isUser: false, timestamp: new Date() });
 
-      // Realiza la clasificación de la imagen utilizando el servicio de la API
       this.apiService.classifyImage(this.selectedFile).subscribe({
         next: (response) => {
           const predictedIndex = parseInt(response.predictions); // Recibe un número
           const predictedLabel = this.CLASSES[predictedIndex] || "Desconocido"; // Convierte a nombre
-
-          // Añadir al chat la clasificación de la imagen
-          this.messages.push({ text: `📸 Imagen clasificada como: ${predictedLabel}`, isUser: false, timestamp: new Date() });
-
-          // Limpiar la selección de la imagen
-          this.selectedFile = null;
+          this.messages.push({ text: `📸 Imagen clasificada como: ${predictedLabel}`, isUser:false, timestamp: new Date() });
+          this.selectedFile = null; 
         },
         error: () => {
-          // Si hay un error en la clasificación, añadir mensaje de error
-          this.messages.push({ text: "❌ Error al clasificar la imagen.", isUser: false, timestamp: new Date() });
+          this.messages.push({ text: "❌ Error al clasificar la imagen.", isUser:false, timestamp: new Date()});
           this.selectedFile = null;
         }
       });
       return;
-    }
-
-    // Si hay texto de usuario, proceder con el flujo normal de mensaje.
-    this.messages.push({ text: this.userInput, isUser: true, timestamp: new Date() });
-    this.userInput = '';
-
-    // Aquí puedes añadir cualquier otra lógica para responder con el asistente
-    const inputText = this.userInput;
-    this.messages.push({ text: 'Generando respuesta...', isUser: false, timestamp: new Date() });
-
-    try {
-      // Obtener el observable de streaming
-      const botReply$ = this.chatService.sendMessage(inputText);
-
-      // Reemplazar el mensaje "Generando respuesta..." con la respuesta real
-      const lastMessageIndex = this.messages.length - 1;
-
-      // Suscribirse al observable para recibir los chunks
-      let isFirstChunk = true;
-      botReply$.subscribe({
-        next: (chunk) => {
-          if (isFirstChunk) {
-            this.messages[lastMessageIndex].text = chunk;
-            isFirstChunk = false;
-          } else {
-            this.messages[lastMessageIndex].text += chunk;
-          }
-        },
-        error: (error) => {
-          console.error('Error al recibir la respuesta del asistente:', error);
-          this.messages[lastMessageIndex].text = 'Error al procesar la solicitud.';
-        },
-        complete: () => {
-          console.log('Streaming completado');
-        }
-      });
-    } catch (error) {
-      console.error('Error al enviar mensaje:', error);
-      this.messages[this.messages.length - 1].text = 'Error al procesar la solicitud.';
     }
   }
 
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0] || null;
     if (this.selectedFile) {
-      this.messages.push({ text: `📂 Imagen seleccionada: ${this.selectedFile.name}`, isUser: true, timestamp: new Date() });
+      this.messages.push({ text: `📂 Imagen seleccionada: ${this.selectedFile.name}`, isUser:true, timestamp: new Date() });
     }
+  }
+
+  async classifyImage() {
+    if (!this.selectedFile) {
+      alert("Por favor, selecciona una imagen.");
+      return;
+    }
+
+    this.apiService.classifyImage(this.selectedFile).subscribe({
+      next: (response) => {
+        const predictedIndex = parseInt(response.predictions);
+        this.classificationResult = this.CLASSES[predictedIndex] || "Desconocido";
+      },
+      error: (error) => {
+        console.error("Error en la clasificación:", error);
+        this.classificationResult = "Error al clasificar la imagen.";
+      }
+    });
   }
 }

@@ -7,36 +7,39 @@
   </div>
 
   <div class="chat-window">
-    <div *ngFor="let message of messages" [ngClass]="{ 'user-message': message.isUser, 'bot-message': !message.isUser }" class="message">
+    <div *ngFor="let message of messages" [ngClass]="{ 'user-message': message.isUser, 'bot-message': !message.isUser }"
+      class="message">
       {{ message.text }}
       <div class="message-timestamp">{{ message.timestamp | date:'short' }}</div>
     </div>
   </div>
 
   <div class="input-area">
-    <input [(ngModel)]="userInput" placeholder="Ingresa el mensaje..." (keyup.enter)="sendMessage()" class="input"/>
+    <input [(ngModel)]="userInput" placeholder="Ingresa el mensaje..." (keyup.enter)="sendMessage()" class="input" />
     <button (click)="sendMessage()">
       <i class="fas fa-paper-plane"></i>
     </button>
-  
+
     <!-- Botón para grabar audio -->
     <button (click)="toggleRecording()" [ngClass]="{'recording': isRecording}">
       <i class="fas fa-microphone "></i> {{ isRecording ? 'Detener' : ' Grabar' }}
     </button>
-  
+
     <!-- Mostrar el campo de carga de imagen solo si está activada la opción -->
     <div *ngIf="enableImageClassification || enableObjectDetection" class="image-upload">
       <label for="file-upload" class="upload-button">
         <input id="file-upload" type="file" accept="image/*" (change)="onFileSelected($event)" style="display: none;" />
         <i class="fas fa-upload"></i> Subir archivo
       </label>
+      <!-- Botón para clasificar la imagen (visible solo si se seleccionó un archivo) -->
+      <button *ngIf="selectedFile" (click)="askAssistant()">Clasificar Imagen</button>
     </div>
   </div>
-  
+
 
   <!-- Controles para activar los modelos de visión -->
   <div class="vision-controls">
-    <div class="checkbox-container"> 
+    <div class="checkbox-container">
       <label>
         <input type="checkbox" [(ngModel)]="enableImageClassification" />
         Clasificación de Imágenes
@@ -50,5 +53,5 @@
     </div>
   </div>
 
-  
+
 </div>
