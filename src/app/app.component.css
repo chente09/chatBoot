@@ -1,23 +1,44 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+.container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 300px;
+}
+
+.logo-container{
+  display: flex;
+  flex-direction: column;
+  width: 550px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-size:30px;
+}
+
+.logo{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+  font-family: "Nunito", serif;
+  font-weight: bold;
+}
+
+
 /* Estilos del chatbot */
 .chatbot-container {
   font-family: Arial, sans-serif;
   max-width: 900px;
-  margin: 50px auto;
-  margin-top: 90px;
+  height: 100%;
+  margin-top: 50px;
   border-radius: 15px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   padding: 20px;
-  background-color: #ffffff;
-}
-
-.night-mode {
   background-color: #1e1e1e;
-  color: #ffffff;
-}
-
-.day-mode {
-  background-color: #ffffff;
-  color: #000000;
 }
 
 .header {
@@ -28,7 +49,8 @@
 }
 
 .chat-window {
-  height: 500px;
+  width: 700px;
+  height: 600px;
   overflow-y: auto;
   padding: 15px;
   margin-bottom: 20px;
@@ -42,18 +64,20 @@
   max-width: 50%;
   word-wrap: break-word;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #444444;
+  color: white;
 }
 
 .user-message {
-  background-color: white;
-  color: black;
+  background-color: #444444;
+  color: white;
   align-self: flex-end;
   margin-left: auto;
   border-top-right-radius: 0px;
 }
 
 .ai-message {
-  color: black;
+  color: white;
 }
 
 .input-area {
@@ -68,20 +92,22 @@ input {
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 14px;
+  background-color: #444444;
+  color: white;
 }
 
 button {
   padding: 10px 15px;
   border: none;
   border-radius: 8px;
-  background-color: #68497F;
+  background-color: #8A2D1E;
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 button:hover {
-  background-color: #A670B9;
+  background-color: #F5D03F;
 }
 
 button.recording {
@@ -109,7 +135,7 @@ button i {
   padding: 10px 15px;
   border: none;
   border-radius: 8px;
-  background-color: #68497F;
+  background-color: #8A2D1E;
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -117,22 +143,6 @@ button i {
 
 .upload-button:hover {
   background-color: #218838;
-}
-
-.chatbot-title {
-  display: flex;
-  align-items: center;
-}
-
-.chatbot-icon {
-  font-size: 40px; /* Tamaño grande del ícono */
-  color: #007bff; /* Color azul por defecto */
-  transition: color 0.3s ease; /* Transición suave para el modo nocturno */
-}
-
-/* Estilos para el modo nocturno */
-.night-mode .chatbot-icon {
-  color: #ffffff; /* Color blanco en modo nocturno */
 }
 
 
@@ -148,8 +158,15 @@ button i {
   padding: 7px;
   border: 1px solid #D8D8D8;
   border-radius: 10px;
+  color: white;
 }
 
+
+
+.message-timestamp{
+  margin-top: 10px;
+  font-size: small;
+}
 
 
 .message-timestamp{
@@ -163,4 +180,91 @@ button i {
   display: block;
   margin-top: 10px;
   border-radius: 8px;
+}
+
+/* Modo oscuro */
+.night-mode {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+.night-mode .chat-window {
+  background-color: #2a2a2a;
+  border-color: #444;
+}
+
+.night-mode .input {
+  background-color: #333;
+  color: #fff;
+  border-color: #555;
+}
+
+.night-mode .send-button, 
+.night-mode .record-button, 
+.night-mode .upload-button, 
+.night-mode .classify-button {
+  background-color: #444;
+  color: #fff;
+  border-color: #666;
+}
+
+.night-mode .message.user-message {
+  background-color: #444;
+  color: #fff;
+}
+
+.night-mode .message.bot-message {
+  background-color: #333;
+  color: #ddd;
+}
+
+/* Modo claro */
+.day-mode {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.day-mode .chat-window {
+  background-color: #f9f9f9;
+  border-color: #ddd;
+}
+
+.day-mode .input {
+  background-color: #fff;
+  color: #000;
+  border-color: #ccc;
+}
+
+.day-mode .send-button, 
+.day-mode .record-button, 
+.day-mode .upload-button, 
+.day-mode .classify-button {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #0056b3;
+}
+
+.day-mode .message.user-message {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.day-mode .message.bot-message {
+  background-color: #e2e3e5;
+  color: #383d41;
+}
+
+/* Botón de cambio de tema */
+.theme-toggle {
+  background: none;
+  border: none;
+  color: inherit;
+}
+
+.night-mode .theme-toggle i {
+  color: #ffcc00;
+}
+
+.day-mode .theme-toggle i {
+  color: #333;
 }

@@ -1,56 +1,62 @@
-<div [ngClass]="{'night-mode': isNightMode, 'day-mode': !isNightMode}" class="chatbot-container">
-  <header class="header">
-    <h2 class="chatbot-title">AI Chatbot</h2>
+  
+<div class="container">
+  <div class="logo-container" >
+    
+    <div class="logo">
+      <img src="https://i.postimg.cc/k522ZRVx/Imagen-de-Whats-App-2025-02-13-a-las-11-14-27-5747a9e7.jpg" style="height: 300px; width: 300px;" alt="Logo">
+      <p>Chatea y descubre sabores al instante!</p>
+    </div>
+  </div>
+  <div class="chatbot-container" [ngClass]="{'night-mode': isNightMode, 'day-mode': !isNightMode}" >
     <button type="button" class="theme-toggle" aria-label="Toggle theme" (click)="toggleNightMode()">
       <i class="fas" [ngClass]="isNightMode ? 'fa-sun' : 'fa-moon'"></i>
     </button>
-  </header>
-
-  <div class="chat-window">
-    <div *ngFor="let message of messages" [ngClass]="{ 'user-message': message.isUser, 'bot-message': !message.isUser }"
-      class="message">
-      <p class="message-text">{{ message.text }}</p>
-      <!-- Mostrar la imagen solo si imageUrl existe -->
-      <img *ngIf="message.imageUrl" [src]="message.imageUrl" alt="Vista previa de la imagen" class="message-image" />
-      <div class="message-timestamp">{{ message.timestamp | date:'short' }}</div>
+    <div class="chat-window">
+      <div *ngFor="let message of messages" [ngClass]="{ 'user-message': message.isUser, 'bot-message': !message.isUser }"
+        class="message">
+        <p class="message-text">{{ message.text }}</p>
+        <!-- Mostrar la imagen solo si imageUrl existe -->
+        <img *ngIf="message.imageUrl" [src]="message.imageUrl" alt="Vista previa de la imagen" class="message-image" />
+        <div class="message-timestamp">{{ message.timestamp | date:'short' }}</div>
+      </div>
     </div>
-  </div>
 
-  <div class="input-area">
-    <input type="text" [(ngModel)]="userInput" placeholder="Ingresa el mensaje..." (keyup.enter)="sendMessage()"
-      class="input" />
-    <button type="button" (click)="sendMessage()" class="send-button">
-      <i class="fas fa-paper-plane"></i>
-    </button>
-
-    <button type="button" (click)="toggleRecording()" [ngClass]="{'recording': isRecording}" class="record-button">
-      <i class="fas fa-microphone"></i> {{ isRecording ? 'Detener' : 'Grabar' }}
-    </button>
-
-    <!-- Sección para cargar imagen (visible si se activa alguna opción de visión) -->
-    <div *ngIf="enableImageClassification || enableObjectDetection" class="image-upload">
-      <label for="file-upload" class="upload-button">
-        <input id="file-upload" type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
-        <i class="fas fa-upload"></i> Subir archivo
-      </label>
-
-
-      <!-- Botón para clasificar la imagen, visible solo si se ha seleccionado un archivo -->
-      <button *ngIf="selectedFile" type="button" (click)="askAssistant()" class="classify-button">
-        Clasificar Imagen
+    <div class="input-area">
+      <input type="text" [(ngModel)]="userInput" placeholder="Ingresa el mensaje..." (keyup.enter)="sendMessage()"
+        class="input" />
+      <button type="button" (click)="sendMessage()" class="send-button">
+        <i class="fas fa-paper-plane"></i>
       </button>
+  
+      <button type="button" (click)="toggleRecording()" [ngClass]="{'recording': isRecording}" class="record-button">
+        <i class="fas fa-microphone"></i> {{ isRecording ? 'Detener' : 'Grabar' }}
+      </button>
+      
+  
+      <!-- Sección para cargar imagen (visible si se activa alguna opción de visión) -->
+      <div *ngIf="enableImageClassification || enableObjectDetection" class="image-upload">
+        <label for="file-upload" class="upload-button">
+          <input id="file-upload" type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+          <i class="fas fa-upload"></i> Subir archivo
+        </label>
+  
+  
+        <!-- Botón para clasificar la imagen, visible solo si se ha seleccionado un archivo -->
+        <button *ngIf="selectedFile" type="button" (click)="askAssistant()" class="classify-button">
+          Clasificar Imagen
+        </button>
+      </div>
     </div>
-  </div>
-
-
-
-  <div class="vision-controls">
-    <div class="checkbox-container">
-      <label>
-        <input type="checkbox" [(ngModel)]="enableImageClassification" />
-        Clasificación de Imágenes
-      </label>
+  
+  
+  
+    <div class="vision-controls">
+      <div class="checkbox-container">
+        <label>
+          <input type="checkbox" [(ngModel)]="enableImageClassification" />
+          Clasificación de Imágenes
+        </label>
+      </div>
     </div>
-
   </div>
 </div>
