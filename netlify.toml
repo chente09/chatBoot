@@ -6,3 +6,7 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[build.environment]
+  OPENAI_API_KEY = "$OPENAI_API_KEY"
+  OPENAI_ASSISTANT_ID = "$OPENAI_ASSISTANT_ID"
