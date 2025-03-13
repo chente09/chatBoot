@@ -1,270 +1,421 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
-
-.container{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 300px;
-}
-
-.logo-container{
-  display: flex;
-  flex-direction: column;
-  width: 550px;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
-  font-size:30px;
-}
-
-.logo{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #ccc;
-  font-family: "Nunito", serif;
-  font-weight: bold;
-}
-
-
-/* Estilos del chatbot */
-.chatbot-container {
-  font-family: Arial, sans-serif;
-  max-width: 900px;
-  height: 100%;
-  margin-top: 50px;
-  border-radius: 15px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+/* Estilos generales */
+.container {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 20px;
-  background-color: #1e1e1e;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
 
-.chat-window {
-  width: 700px;
-  height: 600px;
-  overflow-y: auto;
-  padding: 15px;
-  margin-bottom: 20px;
-}
-
-.message {
-  margin-bottom: 15px;
-  padding: 10px 15px;
+.welcome-section {
+  text-align: center;
+  padding: 50px 20px;
+  background-image: linear-gradient(rgba(133, 127, 127, 0.276), rgba(36, 34, 34, 0.301)), url('https://c0.wallpaperflare.com/preview/565/228/846/japanese-japan-restaurant-culture.jpg');
   border-radius: 10px;
+  margin-bottom: 20px;
+  height: 400px;
+  background-size: cover;
+  background-position: center;
+}
+
+.welcome-section h1 {
+  font-size: 3.5rem;
+  color: #c9c8c8;
+  background-color: rgba(82, 80, 80, 0.9);
   width: fit-content;
-  max-width: 50%;
-  word-wrap: break-word;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #444444;
-  color: white;
+  margin: 0 auto;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-family: 'Dancing Script', cursive;
 }
 
-.user-message {
-  background-color: #444444;
-  color: white;
-  align-self: flex-end;
-  margin-left: auto;
-  border-top-right-radius: 0px;
+.welcome-section p {
+  font-size: 1.2rem;
+  color: #c9c8c8;
+  background-color: rgba(82, 80, 80, 0.9);
+  width: fit-content;
+  margin: 0 auto;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-family: 'Dancing Script', cursive;
 }
 
-.ai-message {
-  color: white;
-}
-
-.input-area {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-input { 
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
-  background-color: #444444;
-  color: white;
-}
-
-button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  background-color: #8A2D1E;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #F5D03F;
-}
-
-button.recording {
-  background-color: #dc3545;
-  animation: pulse 1.5s infinite;
-}
-
+/* Animación de palpitación */
 @keyframes pulse {
   0% {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.05);
+    transform: scale(1.1);
   }
   100% {
     transform: scale(1);
   }
 }
 
-button i {
-  margin-right: 5px;
-}
-
-.upload-button {
-  padding: 10px 15px;
+/* Estilos del botón de invitación al chat */
+.chat-invitation-button {
+  background-color: #e24e40;
+  color: white;
   border: none;
-  border-radius: 8px;
-  background-color: #8A2D1E;
-  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.upload-button:hover {
-  background-color: #218838;
-}
-
-
-.vision-controls{
-  display: flex;
-  justify-content: center;
-  gap: 30px;
+  font-size: 1rem;
   margin-top: 20px;
+  animation: pulse 2s infinite; /* Aplica la animación */
+  transition: background-color 0.3s, transform 0.3s; /* Transición suave */
+}
+
+/* Efecto hover */
+.chat-invitation-button:hover {
+  background-color: #ff4a3d;
+  animation: none; /* Detiene la animación al hacer hover */
+  transform: scale(1.1); /* Escala el botón al hacer hover */
+}
+
+/* animaciones para el char */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }  
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 
-.checkbox-container{
-  padding: 7px;
-  border: 1px solid #D8D8D8;
+/* Botón flotante */
+.floating-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #ff6f61;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 3s infinite; /* Animación de entrada */
+  transition: background-color 0.3s, transform 0.5s; /* Transición suave */
+
+}
+
+.floating-button:hover {
+  background-color: #ff4a3d;
+  transform: scale(1.1);
+  animation: none;
+}
+
+.floating-button img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* Contenedor del chatbot */
+.chatbot-container {
+  position: fixed;
+  bottom: 20px;
+  right: 15%;
+  width: 850px;
+  background-color: white;
   border-radius: 10px;
-  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: none;
 }
 
-
-
-.message-timestamp{
-  margin-top: 10px;
-  font-size: small;
-}
-
-
-.message-timestamp{
-  margin-top: 10px;
-  font-size: small;
-}
-
-.message-image {
-  max-width: 200px;
-  max-height: 200px;
+.chatbot-visible {
   display: block;
-  margin-top: 10px;
-  border-radius: 8px;
 }
 
-/* Modo oscuro */
+/* Estilos para la ventana de chat, área de entrada y controles de visión */
+.chat-window {
+  height: 420px;
+  overflow-y: auto;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.input-area {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.send-button, .record-button, .upload-button, .classify-button {
+  background-color: #ff6f61;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.send-button:hover, .record-button:hover, .upload-button:hover, .classify-button:hover {
+  background-color: #ff4a3d;
+}
+
+.vision-controls {
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.checkbox-container {
+  margin-bottom: 10px;
+}
+
+.checkbox-description {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Estilos para el tema nocturno */
 .night-mode {
-  background-color: #1e1e1e;
+  background-color: #1a1a1a;
   color: #ffffff;
 }
 
 .night-mode .chat-window {
-  background-color: #2a2a2a;
-  border-color: #444;
+  background-color: #2d2d2d;
+  color: #ffffff;
+}
+
+.night-mode .input-area {
+  background-color: #2d2d2d;
 }
 
 .night-mode .input {
-  background-color: #333;
-  color: #fff;
+  background-color: #3d3d3d;
+  color: #ffffff;
   border-color: #555;
 }
 
-.night-mode .send-button, 
-.night-mode .record-button, 
-.night-mode .upload-button, 
-.night-mode .classify-button {
+.night-mode .send-button, .night-mode .record-button, .night-mode .upload-button, .night-mode .classify-button {
   background-color: #444;
-  color: #fff;
-  border-color: #666;
+  color: #ffffff;
 }
 
-.night-mode .message.user-message {
-  background-color: #444;
-  color: #fff;
+.night-mode .send-button:hover, .night-mode .record-button:hover, .night-mode .upload-button:hover, .night-mode .classify-button:hover {
+  background-color: #555;
 }
 
-.night-mode .message.bot-message {
-  background-color: #333;
-  color: #ddd;
-}
-
-/* Modo claro */
+/* Estilos para el tema diurno */
 .day-mode {
   background-color: #ffffff;
-  color: #000000;
+  color: #333333;
 }
 
 .day-mode .chat-window {
-  background-color: #f9f9f9;
-  border-color: #ddd;
+  background-color: #f8f8f8;
+  color: #333333;
+}
+
+.day-mode .input-area {
+  background-color: #f8f8f8;
 }
 
 .day-mode .input {
-  background-color: #fff;
-  color: #000;
-  border-color: #ccc;
+  background-color: #ffffff;
+  color: #333333;
+  border-color: #ddd;
 }
 
-.day-mode .send-button, 
-.day-mode .record-button, 
-.day-mode .upload-button, 
-.day-mode .classify-button {
-  background-color: #007bff;
-  color: #fff;
-  border-color: #0056b3;
+.day-mode .send-button, .day-mode .record-button, .day-mode .upload-button, .day-mode .classify-button {
+  background-color: #ff6f61;
+  color: #ffffff;
 }
 
-.day-mode .message.user-message {
-  background-color: #cce5ff;
-  color: #004085;
+.day-mode .send-button:hover, .day-mode .record-button:hover, .day-mode .upload-button:hover, .day-mode .classify-button:hover {
+  background-color: #ff4a3d;
 }
 
-.day-mode .message.bot-message {
-  background-color: #e2e3e5;
-  color: #383d41;
+/* Estilos para los mensajes */
+.message {
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 70%; /* Limita el ancho de los mensajes */
 }
 
-/* Botón de cambio de tema */
-.theme-toggle {
-  background: none;
+/* Mensajes del usuario (alineados a la derecha) */
+.user-message {
+  background-color: #ff6f61; /* Color de fondo para el usuario */
+  color: white; /* Color del texto */
+  margin-left: auto; /* Alinea a la derecha */
+  text-align: right; /* Alinea el texto a la derecha */
+}
+
+/* Mensajes del bot (alineados a la izquierda) */
+.bot-message {
+  background-color: #f1f1f1; /* Color de fondo para el bot */
+  color: #333; /* Color del texto */
+  margin-right: auto; /* Alinea a la izquierda */
+  text-align: left; /* Alinea el texto a la izquierda */
+}
+
+/* Estilos para el tema nocturno */
+.night-mode .user-message {
+  background-color: #444; /* Color de fondo para el usuario en modo nocturno */
+  color: #ffffff; /* Color del texto en modo nocturno */
+}
+
+.night-mode .bot-message {
+  background-color: #3d3d3d; /* Color de fondo para el bot en modo nocturno */
+  color: #ffffff; /* Color del texto en modo nocturno */
+}
+
+/* Estilos para el botón de nuevo chat */
+.new-chat-button {
+  background-color: #5e6a5e; /* Color verde */
+  color: white;
   border: none;
-  color: inherit;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin: 10px;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
-.night-mode .theme-toggle i {
-  color: #ffcc00;
+/* Aliner el botón a la derecha */
+.new-chat-button {
+  margin-left: 80%;
 }
 
-.day-mode .theme-toggle i {
-  color: #333;
+.new-chat-button:hover {
+  background-color: #264c28; /* Color verde más oscuro al hacer hover */
+  transform: scale(1.05); /* Efecto de escala al hacer hover */
+}
+
+.new-chat-button i {
+  margin-right: 5px; /* Espacio entre el ícono y el texto */
+}
+
+/* Media Queries */
+@media (max-width: 1200px) {
+  .container {
+    padding: 10px;
+  }
+
+  .welcome-section h1 {
+    font-size: 2.5rem;
+  }
+
+  .welcome-section p {
+    font-size: 1rem;
+  }
+
+  .chatbot-container {
+    width: 80%;
+    right: 10%;
+  }
+
+  .floating-button {
+    right: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .welcome-section {
+    height: 100vh;
+  }
+
+  .chatbot-container {
+    width: 100%;
+    right: 0;
+    top: 0;
+    height: 100%;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .close-chat-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .floating-button {
+    bottom: 15px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+  }
+
+  .floating-button img {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chatbot-container {
+    width: 100%;
+    right: 0;
+    top: 0;
+    height: 100%;
+  }
+
+  .floating-button {
+    right: 15px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .floating-button img {
+    width: 25px;
+    height: 25px;
+  }
+
+  .chat-invitation-button {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+
+  .input-area {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .input {
+    width: 100%;
+  }
+
+  .send-button, .record-button, .upload-button, .classify-button {
+    width: 100%;
+    font-size: 0.8rem;
+  }
 }

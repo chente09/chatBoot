@@ -1,61 +1,80 @@
-  
 <div class="container">
-  <div class="logo-container" >
-    
-    <div class="logo">
-      <img src="https://i.postimg.cc/k522ZRVx/Imagen-de-Whats-App-2025-02-13-a-las-11-14-27-5747a9e7.jpg" style="height: 300px; width: 300px;" alt="Logo">
-      <p>Chatea y descubre sabores al instante!</p>
-    </div>
+  <!-- Sección de bienvenida -->
+  <div class="welcome-section" *ngIf="!isChatVisible">
+    <h1>Bienvenido a Sabor Ecuatoriano</h1>
+    <br>
+    <p>Descubre los sabores auténticos de la comida ecuatoriana. ¡Estamos aquí para ayudarte!</p>
+    <button class="chat-invitation-button" (click)="toggleChat()" aria-label="Abrir Chatbot">
+      <i class="fas fa-comments"></i> Habla con nuestro asistente
+    </button>
   </div>
-  <div class="chatbot-container" [ngClass]="{'night-mode': isNightMode, 'day-mode': !isNightMode}" >
-    <button type="button" class="theme-toggle" aria-label="Toggle theme" (click)="toggleNightMode()">
+
+  <!-- Botón flotante para el chatbot -->
+  <button class="floating-button" (click)="toggleChat()" aria-label="Abrir Chatbot">
+    <img src="https://i.postimg.cc/k522ZRVx/Imagen-de-Whats-App-2025-02-13-a-las-11-14-27-5747a9e7.jpg" alt="Logo del Chatbot" class="chatbot-logo">
+  </button>
+
+  <!-- Contenedor del chatbot (inicialmente oculto) -->
+  <div class="chatbot-container" [ngClass]="{'chatbot-visible': isChatVisible, 'night-mode': isNightMode, 'day-mode': !isNightMode}">
+    <button class="close-chat-button" (click)="toggleChat()" aria-label="Cerrar Chatbot">X</button>
+
+    <!-- Botón de cambio de tema -->
+    <button type="button" class="theme-toggle" aria-label="Cambiar tema" (click)="toggleNightMode()">
       <i class="fas" [ngClass]="isNightMode ? 'fa-sun' : 'fa-moon'"></i>
     </button>
+
+    <!-- Botón para nuevo chat -->
+  <button type="button" class="new-chat-button" aria-label="Nuevo chat" (click)="startNewChat()">
+    <i class="fas fa-plus"></i> Nuevo chat
+  </button>
+
+
+    <!-- Ventana de chat -->
     <div class="chat-window">
-      <div *ngFor="let message of messages" [ngClass]="{ 'user-message': message.isUser, 'bot-message': !message.isUser }"
-        class="message">
+      <div *ngFor="let message of messages"
+        [ngClass]="{ 'user-message': message.isUser, 'bot-message': !message.isUser }" class="message">
         <p class="message-text">{{ message.text }}</p>
-        <!-- Mostrar la imagen solo si imageUrl existe -->
-        <img *ngIf="message.imageUrl" [src]="message.imageUrl" alt="Vista previa de la imagen" class="message-image" />
+        <img *ngIf="message.imageUrl" [src]="message.imageUrl" alt="Vista previa de la imagen" class="message-image">
         <div class="message-timestamp">{{ message.timestamp | date:'short' }}</div>
+      </div>
+      <div *ngIf="isLoading" class="loading-indicator">
+        <i class="fas fa-spinner fa-spin"></i> Procesando...
       </div>
     </div>
 
+    <!-- Área de entrada -->
     <div class="input-area">
-      <input type="text" [(ngModel)]="userInput" placeholder="Ingresa el mensaje..." (keyup.enter)="sendMessage()"
-        class="input" />
-      <button type="button" (click)="sendMessage()" class="send-button">
-        <i class="fas fa-paper-plane"></i>
-      </button>
-  
-      <button type="button" (click)="toggleRecording()" [ngClass]="{'recording': isRecording}" class="record-button">
-        <i class="fas fa-microphone"></i> {{ isRecording ? 'Detener' : 'Grabar' }}
-      </button>
-      
-  
-      <!-- Sección para cargar imagen (visible si se activa alguna opción de visión) -->
+      <input #userInputRef type="text" placeholder="Ingresa el mensaje..." (keyup.enter)="sendMessage()" class="input"
+        aria-label="Escribe un mensaje">
+      <div class="button-group">
+        <button type="button" (click)="sendMessage()" class="send-button" aria-label="Enviar mensaje">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+        <button type="button" (click)="toggleRecording()" [ngClass]="{'recording': isRecording}" class="record-button"
+          aria-label="Grabar mensaje">
+          <i class="fas fa-microphone"></i> {{ isRecording ? 'Detener' : 'Grabar' }}
+        </button>
+      </div>
+
+      <!-- Carga de imágenes -->
       <div *ngIf="enableImageClassification || enableObjectDetection" class="image-upload">
         <label for="file-upload" class="upload-button">
-          <input id="file-upload" type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+          <input id="file-upload" type="file" accept="image/*" (change)="onFileSelected($event)" hidden>
           <i class="fas fa-upload"></i> Subir archivo
         </label>
-  
-  
-        <!-- Botón para clasificar la imagen, visible solo si se ha seleccionado un archivo -->
-        <button *ngIf="selectedFile" type="button" (click)="askAssistant()" class="classify-button">
+        <button *ngIf="selectedFile" type="button" (click)="askAssistant()" class="classify-button"
+          aria-label="Clasificar imagen">
           Clasificar Imagen
         </button>
       </div>
     </div>
-  
-  
-  
+
+    <!-- Controles de visión -->
     <div class="vision-controls">
       <div class="checkbox-container">
-        <label>
-          <input type="checkbox" [(ngModel)]="enableImageClassification" />
-          Clasificación de Imágenes
-        </label>
+        <input type="checkbox" id="classification" (change)="toggleCheckbox('classification', $event)">
+        <label for="classification">Habilitar Clasificación de Imágenes</label>
+        <p class="checkbox-description">Permite al asistente clasificar imágenes e identificar su contenido.</p>
       </div>
     </div>
   </div>
