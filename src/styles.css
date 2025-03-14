@@ -1,4 +1,5 @@
 
+
 body {
   background-color: #ffffff;
   color: #000000;
@@ -22,4 +23,15 @@ body::before {
   height: 100%;
   background: rgba(0, 0, 0, 0.7); /* Ajusta la opacidad para mayor o menor oscurecimiento */
   z-index: -1;
+}
+
+@media (max-width: 480px) {
+  body {
+    background-size: cover; /* Asegurar que el fondo cubra toda la pantalla */
+    background-attachment: scroll; /* Evitar que el fondo sea fijo */
+  }
+
+  body::before {
+    background: rgba(0, 0, 0, 0.5); /* Reducir la opacidad del oscurecimiento */
+  }
 }

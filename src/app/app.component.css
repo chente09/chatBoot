@@ -145,9 +145,10 @@
 /* Estilos para la ventana de chat, área de entrada y controles de visión */
 .chat-window {
   height: 420px;
-  overflow-y: auto;
+  overflow-y: auto; /* Permite el desplazamiento vertical */
   padding: 10px;
   border-bottom: 1px solid #ddd;
+  box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
 }
 
 .input-area {
@@ -262,7 +263,21 @@
   padding: 10px;
   border-radius: 10px;
   max-width: 70%; /* Limita el ancho de los mensajes */
+  word-wrap: break-word; /* Evita que el texto se desborde */
+  overflow: hidden; /* Evita que el contenido se desborde */
 }
+
+.message-image {
+  width: 250px; /* Cambia el ancho */
+  height: 200px; /* Cambia el alto */
+  object-fit: cover;
+  border-radius: 10px;
+  margin-top: 10px;
+
+}
+
+
+
 
 /* Mensajes del usuario (alineados a la derecha) */
 .user-message {
@@ -292,6 +307,15 @@
 }
 
 /* Estilos para el botón de nuevo chat */
+
+.button-container {
+  display: flex;
+  justify-content: flex-end; /* Alinea el botón a la derecha */
+  padding: 10px; /* Espacio alrededor del contenedor */
+  margin-bottom: 10px; /* Espacio debajo del contenedor */
+}
+
+
 .new-chat-button {
   background-color: #5e6a5e; /* Color verde */
   color: white;
@@ -300,14 +324,9 @@
   border-radius: 5px;
   cursor: pointer;
   font-size: 0.9rem;
-  margin: 10px;
   transition: background-color 0.3s, transform 0.3s;
 }
 
-/* Aliner el botón a la derecha */
-.new-chat-button {
-  margin-left: 80%;
-}
 
 .new-chat-button:hover {
   background-color: #264c28; /* Color verde más oscuro al hacer hover */
@@ -325,11 +344,13 @@
   }
 
   .welcome-section h1 {
-    font-size: 2.5rem;
+    font-size: 2rem; /* Reducir el tamaño de la fuente */
+    padding: 5px 10px; /* Reducir el padding */
   }
 
   .welcome-section p {
-    font-size: 1rem;
+    font-size: 0.9rem; /* Reducir el tamaño de la fuente */
+    padding: 5px 10px; /* Reducir el padding */
   }
 
   .chatbot-container {
@@ -344,7 +365,8 @@
 
 @media (max-width: 768px) {
   .welcome-section {
-    height: 100vh;
+    height: 50vh; /* Reducir la altura de la sección de bienvenida */
+    padding: 20px 10px; /* Reducir el padding */
   }
 
   .chatbot-container {
@@ -358,8 +380,8 @@
 
   .close-chat-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: -1px;
+    right: 1px;
     background-color: #ff4d4d;
     color: white;
     border: none;
@@ -379,43 +401,54 @@
     width: 30px;
     height: 30px;
   }
+  .button-container {
+    justify-content: center; /* Centrar el botón en móviles */
+  }
+
+  .new-chat-button {
+    width: 100%; /* Hacer que el botón ocupe todo el ancho en móviles */
+    font-size: 0.8rem; /* Reducir el tamaño de la fuente en móviles */
+  }
 }
 
 @media (max-width: 480px) {
   .chatbot-container {
-    width: 100%;
-    right: 0;
-    top: 0;
-    height: 100%;
+    width: 100%; /* Asegurar que el contenedor ocupe todo el ancho */
+    right: 0; /* Alinear a la derecha */
+    top: 0; /* Alinear en la parte superior */
+    height: 100%; /* Ocupar toda la altura */
+    border-radius: 0; /* Eliminar bordes redondeados */
+    box-shadow: none; /* Eliminar sombra */
   }
 
   .floating-button {
-    right: 15px;
-    width: 40px;
-    height: 40px;
+    bottom: 10px; /* Ajustar la posición del botón flotante */
+    right: 10px; /* Ajustar la posición del botón flotante */
+    width: 50px; /* Reducir el tamaño del botón flotante */
+    height: 50px; /* Reducir el tamaño del botón flotante */
   }
 
   .floating-button img {
-    width: 25px;
-    height: 25px;
+    width: 30px; /* Reducir el tamaño de la imagen del botón flotante */
+    height: 30px; /* Reducir el tamaño de la imagen del botón flotante */
   }
 
   .chat-invitation-button {
-    font-size: 0.8rem;
-    padding: 6px 12px;
+    font-size: 0.8rem; /* Reducir el tamaño de la fuente del botón */
+    padding: 8px 16px; /* Reducir el padding del botón */
   }
 
   .input-area {
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: column; /* Cambiar la dirección del área de entrada a columna */
+    gap: 10px; /* Añadir espacio entre los elementos */
   }
 
   .input {
-    width: 100%;
+    width: 100%; /* Asegurar que el input ocupe todo el ancho */
   }
 
   .send-button, .record-button, .upload-button, .classify-button {
-    width: 100%;
-    font-size: 0.8rem;
+    width: 100%; /* Asegurar que los botones ocupen todo el ancho */
+    font-size: 0.8rem; /* Reducir el tamaño de la fuente de los botones */
   }
 }
